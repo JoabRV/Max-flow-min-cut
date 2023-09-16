@@ -1,0 +1,88 @@
+Algoritmo de Edmonds-Karp
+
+1. **Inicialización**:
+   - Creamos una instancia de la clase `Graph` que representa el grafo con capacidades en las aristas.
+   - Inicializamos el flujo máximo en 0.
+   - Creamos un grafo residual que comienza como una copia del grafo original. Este grafo residual se utiliza para rastrear las capacidades residuales a lo largo del proceso.
+
+2. **Búsqueda de Caminos Aumentantes (BFS)**:
+   - Utilizamos una búsqueda en amplitud (BFS) para encontrar un camino aumentante desde el nodo origen (source) al nodo sumidero (sink) en el grafo residual.
+   - El BFS nos permite encontrar un camino que aún tiene capacidad residual disponible en sus aristas.
+   - Durante el BFS, rastreamos los nodos visitados y los padres de cada nodo en el camino aumentante.
+
+3. **Cálculo del Flujo Máximo en el Camino Aumentante**:
+   - A lo largo del camino aumentante encontrado en el paso anterior, buscamos la capacidad residual mínima. Esta capacidad residual mínima representa la cantidad máxima de flujo que podemos enviar a lo largo de ese camino.
+
+4. **Actualización de las Capacidades Residuales**:
+   - Actualizamos las capacidades residuales en el grafo residual.
+   - Restamos el flujo calculado en el paso anterior de las capacidades residuales a lo largo del camino aumentante.
+   - Añadimos el flujo en sentido opuesto en el grafo residual para permitir que el flujo regrese si es necesario en iteraciones futuras.
+
+5. **Repetición**:
+   - Regresamos al Paso 2 y continuamos buscando más caminos aumentantes en el grafo residual.
+   - Repetimos los Pasos 2, 3 y 4 hasta que no se pueda encontrar más camino aumentante desde el origen al sumidero en el grafo residual.
+
+6. **Fin del Algoritmo**:
+   - Cuando no podemos encontrar más caminos aumentantes, hemos alcanzado el flujo máximo en la red.
+   - El algoritmo se detiene, y el valor del flujo máximo calculado es la respuesta.
+
+7. **Resultado**:
+   - El valor del flujo máximo se devuelve como resultado.
+
+
+#############################################################################################################################
+
+
+# Definir una clase llamada 'Graph' que representa un grafo con capacidades en las aristas.
+class Graph:
+    # Inicializar la clase con el grafo dado.
+    def __init__(self, graph):
+        self.graph = graph  # Grafo residual (capacidades residuales)
+        self.ROW = len(graph)  # Número de filas en el grafo
+        self.COL = len(graph[0])  # Número de columnas en el grafo
+
+    # Función de búsqueda en amplitud (BFS) para encontrar un camino aumentante desde el origen al sumidero.
+    def BFS(self, source, sink, parent):
+        Crear una lista 'visited' para rastrear los nodos visitados y establecer todos los elementos en False
+        Crear una cola de doble terminación 'queue' (deque) para el BFS
+        Agregar el nodo origen 'source' a la cola
+        Marcar el nodo origen 'source' como visitado en 'visited'
+
+        Mientras 'queue' no esté vacío:
+            Tomar el primer nodo 'u' de la cola
+            Para cada vecino 'v' y capacidad 'capacity' en 'self.graph[u]':
+                Si el vecino 'v' no ha sido visitado y la capacidad 'capacity' es mayor que 0:
+                    Agregar el vecino 'v' a la cola
+                    Marcar el vecino 'v' como visitado en 'visited'
+                    Almacenar 'u' como el padre del vecino 'v' en 'parent'
+
+        Devolver True si el nodo sumidero 'sink' ha sido visitado, de lo contrario, devolver False
+
+    # Función principal que implementa el algoritmo de Edmonds-Karp para encontrar el flujo máximo.
+    def EdmondsKarp(self, source, sink):
+        Crear una lista 'parent' para rastrear los padres de los nodos en el camino aumentante y establecer todos los elementos en -1
+        Inicializar el flujo máximo 'max_flow' en 0
+
+        # Paso 2: Mientras haya un camino aumentante desde el origen al sumidero utilizando BFS:
+        Mientras self.BFS(source, sink, parent):
+            Inicializar el flujo en el camino aumentante 'path_flow' como infinito
+            Establecer 's' como el sumidero
+
+            # Paso 3: Encuentra el flujo máximo en el camino aumentante
+            Mientras 's' no sea igual al origen:
+                Buscar la capacidad residual mínima en el camino aumentante y almacenarla en 'path_flow'
+                Actualizar 's' como el padre de 's' en 'parent'
+
+            Establecer 'v' como el sumidero
+
+            # Paso 4: Actualiza las capacidades residuales en el grafo
+            Mientras 'v' no sea igual al origen:
+                Obtener el nodo padre 'u' de 'v' desde 'parent'
+                Restar el flujo del camino aumentante 'path_flow' de la capacidad residual de la arista entre 'u' y 'v'
+                Agregar el flujo en sentido opuesto 'path_flow' en el grafo residual entre 'v' y 'u'
+                Actualizar 'v' como el padre de 'v' en 'parent'
+
+            Acumular el flujo del camino aumentante al flujo máximo total 'max_flow'
+
+        Devolver 'max_flow'
+

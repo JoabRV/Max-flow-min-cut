@@ -1,0 +1,86 @@
+El algoritmo de Ford-Fulkerson se utiliza para encontrar el flujo máximo en una red de flujo en un grafo dirigido.
+
+**Paso 1: Inicialización**
+- Comenzamos con un flujo máximo igual a cero.
+- Creamos un grafo residual que es una copia del grafo original. Inicialmente, todas las capacidades residuales en el grafo residual son iguales a las capacidades originales.
+
+**Paso 2: Búsqueda de Caminos Aumentantes**
+- Utilizamos una búsqueda en amplitud (BFS) para encontrar un camino desde el nodo origen hasta el nodo sumidero en el grafo residual.
+- La búsqueda en amplitud nos ayuda a encontrar un camino que todavía tiene capacidad residual disponible en sus aristas.
+- Si encontramos un camino desde el origen al sumidero, continuamos al Paso 3. De lo contrario, hemos encontrado el flujo máximo y terminamos.
+
+**Paso 3: Cálculo del Flujo Máximo en el Camino Aumentante**
+- A lo largo del camino aumentante que encontramos en el Paso 2, buscamos la capacidad residual mínima. Esto se convierte en la cantidad máxima de flujo que podemos enviar a lo largo de ese camino.
+- Actualizamos el flujo máximo acumulando esta cantidad en el flujo máximo total.
+
+**Paso 4: Actualización de las Capacidades Residuales**
+- Actualizamos las capacidades residuales en el grafo residual. Restamos el flujo calculado en el Paso 3 de las capacidades residuales a lo largo del camino aumentante.
+- También, añadimos el flujo en sentido opuesto en el grafo residual para permitir que el flujo regrese si es necesario en iteraciones futuras.
+
+**Paso 5: Repetición**
+- Regresamos al Paso 2 y continuamos buscando más caminos aumentantes en el grafo residual.
+- Repetimos los Pasos 2, 3 y 4 hasta que no se pueda encontrar ningún camino aumentante desde el origen al sumidero en el grafo residual.
+
+**Paso 6: Fin del Algoritmo**
+- Cuando no podemos encontrar más caminos aumentantes, hemos alcanzado el flujo máximo en la red.
+- En este punto, el algoritmo se detiene, y el valor del flujo máximo calculado es la respuesta.
+
+**Paso 7: Opcional - Cálculo del Corte Mínimo**
+- Si es necesario, podemos realizar un recorrido adicional en el grafo residual para encontrar el corte mínimo.
+- El corte mínimo representa las aristas que dividen el grafo en dos partes, de manera que cualquier camino desde el origen al sumidero atraviese el corte. Estas aristas tienen capacidad cero en el grafo residual.
+
+
+######################################################################################################################################
+
+
+# Definir una clase llamada 'Graph' que representa un grafo con capacidades en las aristas.
+class Graph:
+    # Inicializar la clase con el grafo dado.
+    def __init__(self, graph):
+        self.graph = graph  # Grafo residual (capacidades residuales)
+        self.ROW = len(graph)  # Número de filas en el grafo
+        self.COL = len(graph[0])  # Número de columnas en el grafo
+
+    # Función que realiza una búsqueda en amplitud (BFS) para encontrar un camino aumentante desde el origen al sumidero.
+    def BFS(self, s, t, parent):
+        Crear una lista 'visited' para rastrear los nodos visitados y establecer todos los elementos en False
+        Crear una cola 'queue' para BFS
+        Agregar el nodo origen 's' a la cola
+        Marcar el nodo origen 's' como visitado en 'visited'
+
+        Mientras la cola no esté vacía:
+            Tomar el primer nodo 'u' de la cola
+            Para cada vecino 'ind' y capacidad residual 'val' en la fila 'u' del grafo:
+                Si el vecino 'ind' no ha sido visitado y la capacidad residual 'val' es mayor que 0:
+                    Agregar el vecino 'ind' a la cola
+                    Marcar el vecino 'ind' como visitado en 'visited'
+                    Almacenar 'u' como el padre del vecino 'ind' en 'parent'
+
+        Devolver True si el nodo sumidero 't' ha sido visitado, de lo contrario, devolver False
+
+    # Función principal que implementa el algoritmo Ford-Fulkerson para encontrar el flujo máximo.
+    def FordFulkerson(self, source, sink):
+        Crear una lista 'parent' para rastrear los padres de los nodos en el camino aumentante y establecer todos los elementos en -1
+        Inicializar el flujo máximo 'max_flow' en 0
+
+        Mientras haya un camino aumentante desde el origen al sumidero utilizando BFS:
+            Inicializar el flujo en el camino aumentante 'path_flow' como infinito
+            Establecer 's' como el sumidero
+
+            Mientras 's' no sea igual al origen:
+                Buscar la capacidad residual mínima en el camino aumentante y almacenarla en 'path_flow'
+                Actualizar 's' como el padre de 's' en 'parent'
+
+            Establecer 'v' como el sumidero
+
+            Mientras 'v' no sea igual al origen:
+                Obtener el nodo padre 'u' de 'v' desde 'parent'
+                Restar el flujo del camino aumentante 'path_flow' de la capacidad residual de la arista entre 'u' y 'v'
+                Agregar el flujo en sentido opuesto 'path_flow' en el grafo residual entre 'v' y 'u'
+                Actualizar 'v' como el padre de 'v' en 'parent'
+
+            Acumular el flujo del camino aumentante al flujo máximo total 'max_flow'
+
+        Devolver 'max_flow'
+
+

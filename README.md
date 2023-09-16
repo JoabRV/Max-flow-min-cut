@@ -20,4 +20,4 @@ Google Colaboratory
 Puedes ejecutar estos algoritmos en Google Colaboratory mediante el siguiente enlace:
 Open in Colab https://colab.research.google.com/drive/1T3KYeZyqA4-2EG8bLSvsFn2wWMcm-NbT?usp=sharing#scrollTo=5C4h8Ft93FPA
 
-¡Esperamo que estas implementaciones y recursos sean útiles para comprender y resolver problemas de flujo máximo en grafos! 
+¡Espero que estas implementaciones y recursos sean útiles para comprender y resolver problemas de flujo máximo en grafos! 

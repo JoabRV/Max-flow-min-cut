@@ -1,0 +1,89 @@
+Algoritmo de Dinic
+
+1. **Inicialización**:
+   - Creamos una instancia de la clase `Graph` que representa el grafo con capacidades en las aristas.
+   - Inicializamos el flujo máximo en 0.
+   - Creamos una lista `level` para rastrear los niveles de los nodos en el grafo residual.
+
+2. **Búsqueda en Capas (BFS)**:
+   - Utilizamos una búsqueda en amplitud (BFS) para construir capas en el grafo residual. Cada nivel representa la distancia desde el nodo origen (source) hasta los demás nodos.
+   - Iniciamos desde el nodo origen y avanzamos a través de las aristas en el grafo residual, asignando niveles a los nodos de acuerdo a su distancia desde el origen.
+
+3. **Encontrar Bloqueos de Flujo**:
+   - Utilizamos una función llamada `blocking_flow` para encontrar un bloqueo de flujo en el grafo.
+   - Comenzamos en el nodo origen y avanzamos a través del grafo residual siguiendo las aristas con capacidad positiva.
+   - Encontramos la capacidad mínima a lo largo del camino, que se llama "cuello de botella".
+   - Restamos el flujo del cuello de botella de las capacidades residuales a lo largo del camino y agregamos un flujo equivalente en sentido opuesto en el grafo residual.
+
+4. **Iteración**:
+   - Repetimos los pasos 2 y 3 hasta que ya no sea posible construir más capas en el grafo residual.
+   - Cada iteración agrega más flujo al flujo máximo.
+
+5. **Fin del Algoritmo**:
+   - Cuando no se puede construir más capas en el grafo residual, hemos alcanzado el flujo máximo en la red.
+   - El algoritmo se detiene y el valor del flujo máximo calculado es la respuesta.
+
+6. **Resultado**:
+   - El valor del flujo máximo se devuelve como resultado.
+
+
+
+################################################################################################################################
+
+
+# Definir una clase llamada 'Graph' que representa un grafo con capacidades en las aristas.
+class Graph:
+    # Inicializar la clase con el grafo dado.
+    def __init__(self, graph):
+        self.graph = graph  # Grafo residual (capacidades residuales)
+        self.ROW = len(graph)  # Número de filas en el grafo
+        self.COL = len(graph[0])  # Número de columnas en el grafo
+
+    # Función de búsqueda en amplitud (BFS) para construir capas en el grafo residual.
+    def BFS(self, s, t, level):
+        Inicializar 'level[s]' en 0
+        Crear una cola 'queue' (deque)
+        Agregar el nodo origen 's' a la cola
+        Mientras 'queue' no esté vacío:
+            Tomar el primer nodo 'u' de la cola
+            Para cada vecino 'v' y capacidad 'capacity' en 'self.graph[u]':
+                Si 'level[v]' es menor que 0 y 'capacity' es mayor que 0:
+                    Establecer 'level[v]' como 'level[u] + 1'
+                    Agregar 'v' a la cola
+
+    # Función recursiva para encontrar un bloqueo de flujo.
+    def blocking_flow(self, u, t, flow, level, start):
+        Si 'u' es igual a 't':
+            Devolver 'flow'
+        Para cada vecino 'v' y capacidad 'capacity' en 'self.graph[u][start[u]:]':
+            Si 'level[v]' es igual a 'level[u] + 1' y 'capacity' es mayor que 0:
+                Calcular 'bottleneck' como el mínimo entre 'flow' y 'capacity'
+                Calcular 'bottleneck_flow' llamando recursivamente a 'blocking_flow(v, t, bottleneck, level, start)'
+                Si 'bottleneck_flow' es mayor que 0:
+                    Restar 'bottleneck_flow' de la capacidad residual de la arista entre 'u' y 'v'
+                    Sumar 'bottleneck_flow' a la capacidad residual de la arista entre 'v' y 'u'
+                    Devolver 'bottleneck_flow'
+        Devolver 0
+
+    # Función principal que implementa el algoritmo de Dinic para encontrar el flujo máximo.
+    def Dinic(self, source, sink):
+        Inicializar 'max_flow' en 0
+        Crear una lista 'level' con '-1' repetida 'self.ROW' veces
+
+        Mientras True:
+            # Paso 1: Construir capas en el grafo residual usando BFS
+            Llamar a 'BFS(source, sink, level)'
+            
+            Si 'level[sink]' es menor que 0:
+                Romper  # Si no se puede alcanzar el sumidero, terminar
+            
+            Crear una lista 'start' con '0' repetida 'self.ROW' veces
+            Mientras True:
+                # Paso 2: Encontrar bloqueos de flujo usando DFS
+                Calcular 'flow' llamando a 'blocking_flow(source, sink, infinito, level, start)'
+                Si 'flow' es mayor que 0:
+                    Sumar 'flow' a 'max_flow'
+                Sino:
+                    Romper  # No se encontraron más bloqueos de flujo
+        
+        Devolver 'max_flow'
